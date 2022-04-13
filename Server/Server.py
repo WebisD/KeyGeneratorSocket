@@ -13,7 +13,7 @@ class Server:
     def __init__(self, host: str, port: int):
         self.host = host
         self.port = port
-        self.clientsProcesses = []
+        self.clients_processes = []
 
     def validate_complexity(self, payload: str) -> bool:
         initial_code, n = (int(value) for value in payload.split())
