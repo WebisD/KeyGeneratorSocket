@@ -8,7 +8,7 @@ class Server:
     host: str
     port: int
 
-    clientsProcesses: list[ClientProcess]
+    clients_processes: list[ClientProcess]
 
     def __init__(self, host: str, port: int):
         self.host = host
@@ -28,6 +28,6 @@ class Server:
             while True:
                 connection, address = sock.accept()
                 new_client_process = ClientProcess(connection, address)
-                self.clientsProcesses.append(new_client_process)
+                self.clients_processes.append(new_client_process)
 
                 new_client_process.start_process(self)

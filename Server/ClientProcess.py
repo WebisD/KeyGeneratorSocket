@@ -29,7 +29,7 @@ class ClientProcess:
 
                 process.client_connection.sendall(f"{response_data} payload".encode())
 
-        server.clientsProcesses.remove(process)
+        server.clients_processes.remove(process)
 
     def start_process(self, server: "Server"):
         self.process = Process(target=ClientProcess.connect_client, args=(self, server))
