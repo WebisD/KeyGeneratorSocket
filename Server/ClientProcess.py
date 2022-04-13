@@ -5,14 +5,15 @@ if TYPE_CHECKING:
     from Server import Server
     from socket import socket
 
+
 class ClientProcess:
     process: Process
     client_address: str
-    client_conn: "socket"
+    client_connection: "socket"
 
     def __init__(self, client_connection: "socket", client_address: str):
-        self.client_connection = client_connection
         self.client_address = client_address
+        self.client_connection = client_connection
 
     @staticmethod
     def connect_client(process: "ClientProcess", server: "Server"):
