@@ -6,6 +6,7 @@ if TYPE_CHECKING:
 
 
 class ClientProcess:
+    process: Process
     client_address: str
     client_server: "Server"
 
@@ -28,5 +29,8 @@ class ClientProcess:
                 process.client_connection.sendall(f"{response_data} payload".encode())
 
     def start_process(self, server: "Server"):
-        process = Process(target=ClientProcess.connect_client, args=(self, server))
-        process.start()
+        self.process = Process(target=ClientProcess.connect_client, args=(self, server))
+        self.process.start()
+
+    def kill_process(self):
+        self.process.kill()
