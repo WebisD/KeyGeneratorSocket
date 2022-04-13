@@ -14,7 +14,7 @@ class Server:
         self.host = host
         self.port = port
 
-    def validate_complexity(self, payload: str):
+    def validate_complexity(self, payload: str) -> bool:
         initial_code, n = (int(value) for value in payload.split())
         return initial_code > 10000000 and 5000 < n < 15000
 
@@ -26,7 +26,7 @@ class Server:
 
             while True:
                 connection, address = sock.accept()
-                newClientProcess = ClientProcess(connection, address)
-                process = Process(target=lambda: ClientProcess.client_connection(newClientProcess, self))
+                new_client_process = ClientProcess(connection, address)
+                self.clientsProcesses.append(new_client_process)
 
-                self.clientsProcesses.append(newClientProcess)
+                new_client_process.start_process(self)
