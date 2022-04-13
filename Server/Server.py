@@ -1,8 +1,14 @@
+from multiprocessing import Process
 from socket import socket, AF_INET, SOCK_STREAM
+
+from ClientProcess import ClientProcess
+
 
 class Server:
     host: str
     port: int
+
+    clientsProcesses: list[ClientProcess] = []
 
     def __init__(self, host: str, port: int):
         self.host = host
@@ -20,19 +26,7 @@ class Server:
 
             while True:
                 connection, address = sock.accept()
+                newClientProcess = ClientProcess(connection, address)
+                process = Process(target=lambda: ClientProcess.client_connection(newClientProcess, self))
 
-                with connection:
-                    print(f"New client connected to the server: {address}")
-
-                    while True:
-                        payload = connection.recv(1024)
-
-                        if not payload:
-                            break
-
-                        payload = payload.decode()
-
-                        print(f"Received payload: {payload}")
-                        response_data = "Valid" if self.validate_complexity(payload) else "Invalid"
-
-                        connection.sendall(f"{response_data} payload".encode())
+                self.clientsProcesses.append(newClientProcess)
