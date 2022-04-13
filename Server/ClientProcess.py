@@ -3,14 +3,14 @@ from multiprocessing import Process
 
 if TYPE_CHECKING:
     from Server import Server
-
+    from socket import socket
 
 class ClientProcess:
     process: Process
     client_address: str
-    client_server: "Server"
+    client_conn: "socket"
 
-    def __init__(self, client_connection, client_address: str):
+    def __init__(self, client_connection: "socket", client_address: str):
         self.client_connection = client_connection
         self.client_address = client_address
 
@@ -27,6 +27,8 @@ class ClientProcess:
                 response_data = "Valid" if server.validate_complexity(payload) else "Invalid"
 
                 process.client_connection.sendall(f"{response_data} payload".encode())
+
+        server.clientsProcesses.remove(process)
 
     def start_process(self, server: "Server"):
         self.process = Process(target=ClientProcess.connect_client, args=(self, server))

@@ -8,11 +8,12 @@ class Server:
     host: str
     port: int
 
-    clientsProcesses: list[ClientProcess] = []
+    clientsProcesses: list[ClientProcess]
 
     def __init__(self, host: str, port: int):
         self.host = host
         self.port = port
+        self.clientsProcesses = []
 
     def validate_complexity(self, payload: str) -> bool:
         initial_code, n = (int(value) for value in payload.split())
