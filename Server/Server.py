@@ -1,14 +1,20 @@
+from multiprocessing import Process
 from socket import socket, AF_INET, SOCK_STREAM
+
+from ClientProcess import ClientProcess
+
 
 class Server:
     host: str
     port: int
 
+    clientsProcesses: list[ClientProcess] = []
+
     def __init__(self, host: str, port: int):
         self.host = host
         self.port = port
 
-    def validate_complexity(self, payload: str):
+    def validate_complexity(self, payload: str) -> bool:
         initial_code, n = (int(value) for value in payload.split())
         return initial_code > 10000000 and 5000 < n < 15000
 
@@ -20,19 +26,7 @@ class Server:
 
             while True:
                 connection, address = sock.accept()
+                new_client_process = ClientProcess(connection, address)
+                self.clientsProcesses.append(new_client_process)
 
-                with connection:
-                    print(f"New client connected to the server: {address}")
-
-                    while True:
-                        payload = connection.recv(1024)
-
-                        if not payload:
-                            break
-
-                        payload = payload.decode()
-
-                        print(f"Received payload: {payload}")
-                        response_data = "Valid" if self.validate_complexity(payload) else "Invalid"
-
-                        connection.sendall(f"{response_data} payload".encode())
+                new_client_process.start_process(self)
