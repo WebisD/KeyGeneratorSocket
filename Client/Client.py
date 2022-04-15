@@ -15,8 +15,7 @@ class Client:
     def connect(self, host='localhost', port=8080) -> None:
         with socket(AF_INET, SOCK_STREAM) as sock:
             sock.connect((host, port))
-            print(sock)
+
             self.send_random_payload(sock)
-            # sock.sendall()
-            # response = sock.recv(1024)
-            # print(f"Server response: {response.decode()}")
+            while True:
+                pass
