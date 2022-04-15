@@ -6,7 +6,6 @@ from multiprocessing import Process
 class ClientProcess(Process):
     client_address: str
     client_connection: "socket"
-    on_stop_process: Callable[["ClientProcess"], None]
 
     def __init__(self, client_address: str, client_connection: "socket", **kwargs):
         super().__init__(**kwargs)
