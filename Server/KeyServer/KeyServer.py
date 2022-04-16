@@ -2,6 +2,7 @@ from socket import socket
 from sympy import nextprime, prevprime
 from Server.ServerBase.ClientProcess import ClientProcess
 from Server.ServerBase.ServerBase import ServerBase
+from time import perf_counter
 
 
 class KeyServer(ServerBase):
@@ -10,6 +11,8 @@ class KeyServer(ServerBase):
 
     @staticmethod
     def generate_key(payload: str) -> str:
+        start_time = perf_counter()
+
         initial_code, n = (int(value) for value in payload.split())
 
         lower_prime = upper_prime = initial_code
@@ -20,6 +23,10 @@ class KeyServer(ServerBase):
             upper_prime = nextprime(upper_prime)
             primes_counter += 1
             print(f"lower_prime: {lower_prime}, upper_prime: {upper_prime}, counter: {primes_counter}")
+
+        finish_time = perf_counter()
+
+        print(f"Time: {finish_time-start_time}")
 
         return str(lower_prime * upper_prime)
 
