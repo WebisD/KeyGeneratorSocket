@@ -18,15 +18,18 @@ class KeyServer(ServerBase):
         upper_prime = lower_prime = initial_code
         upper_primes_counter = lower_primes_counter = 0
 
-        while upper_primes_counter < n and lower_primes_counter < n:
-            upper_prime += 1 if upper_primes_counter < n else 0
-            lower_prime -= 1 if lower_primes_counter < n else 0
+        while upper_primes_counter < n or lower_primes_counter < n:
+            if upper_primes_counter < n:
+                upper_prime += 1
 
-            if isprime(upper_prime):
-                upper_primes_counter += 1
+                if isprime(upper_prime):
+                    upper_primes_counter += 1
 
-            if isprime(lower_prime):
-                lower_primes_counter += 1
+            if lower_primes_counter < n:
+                lower_prime -= 1
+
+                if isprime(lower_prime):
+                    lower_primes_counter += 1
 
         print(upper_prime, upper_primes_counter)
         print(lower_prime, lower_primes_counter)
