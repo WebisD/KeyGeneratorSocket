@@ -1,5 +1,5 @@
 from socket import socket
-from sympy import nextprime, prevprime
+from sympy import isprime
 from Server.ServerBase.ClientProcess import ClientProcess
 from Server.ServerBase.ServerBase import ServerBase
 from time import perf_counter
@@ -15,20 +15,25 @@ class KeyServer(ServerBase):
 
         initial_code, n = (int(value) for value in payload.split())
 
-        lower_prime = upper_prime = initial_code
+        upper_prime = lower_prime = initial_code
+        upper_primes_counter = lower_primes_counter = 0
 
-        primes_counter = 0
-        while primes_counter < n:
-            lower_prime = prevprime(lower_prime)
-            upper_prime = nextprime(upper_prime)
-            primes_counter += 1
-            print(f"lower_prime: {lower_prime}, upper_prime: {upper_prime}, counter: {primes_counter}")
+        while upper_primes_counter < n and lower_primes_counter < n:
+            upper_prime += 1 if upper_primes_counter < n else 0
+            lower_prime -= 1 if lower_primes_counter < n else 0
+
+            if isprime(upper_prime):
+                upper_primes_counter += 1
+
+            if isprime(lower_prime):
+                lower_primes_counter += 1
+
+        print(upper_prime, upper_primes_counter)
+        print(lower_prime, lower_primes_counter)
 
         finish_time = perf_counter()
 
-        print(f"Time: {finish_time-start_time}")
-
-        return str(lower_prime * upper_prime)
+        return str(lower_prime * upper_prime) + f" Time: {(finish_time-start_time):.6f}"
 
     @staticmethod
     def connect_client(client_connection: "socket") -> None:
