@@ -20,5 +20,4 @@ class Client:
             while True:
                 pass
 
-print("oi")
 Client().connect()
