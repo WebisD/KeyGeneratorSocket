@@ -1,13 +1,18 @@
-from socket import socket
+from multiprocessing import Process
+from socket import socket, SOCK_STREAM, AF_INET
 from sympy import isprime
-from Server.ServerBase.ClientProcess import ClientProcess
-from Server.ServerBase.ServerBase import ServerBase
 from time import perf_counter
 
 
-class KeyServer(ServerBase):
+class KeyServer:
+    host: int
+    port: int
+    clients_processes: list[Process]
+
     def __init__(self, host: str, port: int):
-        super().__init__(host, port)
+        self.host = host
+        self.port = port
+        self.clients_processes = []
 
     @staticmethod
     def generate_key(payload: str) -> str:
@@ -39,7 +44,7 @@ class KeyServer(ServerBase):
         return str(lower_prime * upper_prime) + f" Time: {(finish_time-start_time):.6f}"
 
     @staticmethod
-    def connect_client(client_connection: "socket") -> None:
+    def connect_client(client_address, client_connection: "socket") -> None:
         with client_connection:
             while True:
                 payload = client_connection.recv(1024).decode()
@@ -51,15 +56,31 @@ class KeyServer(ServerBase):
 
                 generated_key = KeyServer.generate_key(payload)
                 client_connection.sendall(generated_key.encode())
+        print(f"Client {client_address} has been disconnected\n")
 
     def start_client_process(self, client_address: str, client_connection: "socket") -> None:
-        process = ClientProcess(
-            client_address,
-            client_connection,
+        process = Process(
             target=KeyServer.connect_client,
-            args=(client_connection,)
+            args=(client_address, client_connection)
         )
         process.start()
 
         self.clients_processes.append(process)
 
+    def run(self) -> None:
+        with socket(AF_INET, SOCK_STREAM) as sock:
+            sock.bind((self.host, self.port))
+            sock.listen(5)
+            print("Listening at {}:{}".format(self.host, self.port))
+
+            while True:
+                client_connection, client_address = sock.accept()
+
+                client_ip, client_port = client_address
+                client_address = f"{client_ip}:{client_port}"
+
+                print(f"Client with address {client_address} has been connected")
+
+                self.start_client_process(client_address, client_connection)
+
+                print(self.clients_processes)

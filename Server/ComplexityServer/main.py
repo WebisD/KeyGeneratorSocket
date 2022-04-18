@@ -1,5 +1,5 @@
 import multiprocessing
-from Server.ComplexityServer.ComplexityServer import ComplexityServer
+from ComplexityServer import ComplexityServer
 
 if __name__ == '__main__':
     try:

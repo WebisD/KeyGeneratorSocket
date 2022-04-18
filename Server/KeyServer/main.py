@@ -1,5 +1,5 @@
 import multiprocessing
-from Server.KeyServer.KeyServer import KeyServer
+from KeyServer import KeyServer
 
 if __name__ == '__main__':
     try:

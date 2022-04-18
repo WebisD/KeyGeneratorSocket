@@ -1,12 +1,16 @@
+from multiprocessing import Process
 from socket import socket, AF_INET, SOCK_STREAM
 
-from Server.ServerBase.ClientProcess import ClientProcess
-from Server.ServerBase.ServerBase import ServerBase
 
+class ComplexityServer:
+    host: int
+    port: int
+    clients_processes: list[Process]
 
-class ComplexityServer(ServerBase):
     def __init__(self, host: str, port: int):
-        super().__init__(host, port)
+        self.host = host
+        self.port = port
+        self.clients_processes = []
 
     @staticmethod
     def validate_complexity(payload: str) -> bool:
@@ -36,12 +40,28 @@ class ComplexityServer(ServerBase):
                     client_connection.sendall(f"{payload} is an invalid payload".encode())
 
     def start_client_process(self, client_address: str, client_connection: "socket"):
-        process = ClientProcess(
-            client_address,
-            client_connection,
+        client_process = Process(
             target=ComplexityServer.connect_client,
             args=(client_connection,)
         )
-        process.start()
+        client_process.start()
 
-        self.clients_processes.append(process)
+        self.clients_processes.append(client_process)
+
+    def run(self) -> None:
+        with socket(AF_INET, SOCK_STREAM) as sock:
+            sock.bind((self.host, self.port))
+            sock.listen(5)
+            print("Listening at {}:{}".format(self.host, self.port))
+
+            while True:
+                client_connection, client_address = sock.accept()
+
+                client_ip, client_port = client_address
+                client_address = f"{client_ip}:{client_port}"
+
+                print(f"Client with address {client_address} has been connected")
+
+                self.start_client_process(client_address, client_connection)
+
+                print(self.clients_processes)
