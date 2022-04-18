@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from socket import socket, AF_INET, SOCK_STREAM
-from Server.ServerBase.ClientProcess import ClientProcess
+from ClientProcess import ClientProcess
 
 
 class ServerBase(ABC):

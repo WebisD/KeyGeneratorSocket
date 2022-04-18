@@ -1,4 +1,3 @@
-from collections import Callable
 from socket import socket
 from multiprocessing import Process
 

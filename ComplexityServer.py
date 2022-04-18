@@ -1,7 +1,8 @@
+import multiprocessing
 from socket import socket, AF_INET, SOCK_STREAM
 
-from Server.ServerBase.ClientProcess import ClientProcess
-from Server.ServerBase.ServerBase import ServerBase
+from ClientProcess import ClientProcess
+from ServerBase import ServerBase
 
 
 class ComplexityServer(ServerBase):
@@ -45,3 +46,15 @@ class ComplexityServer(ServerBase):
         process.start()
 
         self.clients_processes.append(process)
+
+
+try:
+    ComplexityServer('localhost', 8080).run()
+except Exception as ex:
+    print(f"\nUnexpected error occurred: {str(ex)}")
+finally:
+    print("Shutting down server")
+    for process in multiprocessing.active_children():
+        print(f"Shutting down process {process.pid}")
+        process.terminate()
+        process.join()
