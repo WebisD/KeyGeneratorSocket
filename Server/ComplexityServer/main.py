@@ -6,6 +6,8 @@ if __name__ == '__main__':
         ComplexityServer('localhost', 8080).run()
     except Exception as ex:
         print(f"\nUnexpected error occurred: {str(ex)}")
+    except KeyboardInterrupt:
+        print("a")
     finally:
         print("Shutting down server")
         for process in multiprocessing.active_children():

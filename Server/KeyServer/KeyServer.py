@@ -1,4 +1,3 @@
-import multiprocessing
 from socket import socket, AF_INET, SOCK_STREAM
 from sympy import isprime
 from multiprocessing import Process
@@ -8,12 +7,10 @@ from time import perf_counter
 class KeyServer:
     host: str
     port: int
-    clients_processes: list[Process]
 
     def __init__(self, host: str, port: int):
         self.host = host
         self.port = port
-        self.clients_processes = []
 
     @staticmethod
     def generate_key(payload: str) -> str:
@@ -67,8 +64,6 @@ class KeyServer:
         )
         client_process.start()
 
-        self.clients_processes.append(client_process)
-
     def run(self) -> None:
         with socket(AF_INET, SOCK_STREAM) as sock:
             sock.bind((self.host, self.port))
@@ -82,4 +77,3 @@ class KeyServer:
                 print(f"Client with address {client_address} has been connected")
                 self.start_client_process(client_address, client_connection)
 
-                print(self.clients_processes)
