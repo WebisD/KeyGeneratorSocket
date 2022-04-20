@@ -2,7 +2,7 @@ from socket import socket, AF_INET, SOCK_STREAM
 from sympy import isprime
 from multiprocessing import Process
 from time import perf_counter
-
+import meissel_lehmer_algorithm
 
 class KeyServer:
     host: str
@@ -18,28 +18,11 @@ class KeyServer:
 
         initial_code, n = (int(value) for value in payload.split())
 
-        upper_prime = lower_prime = initial_code
-        upper_primes_counter = lower_primes_counter = 0
-
-        while upper_primes_counter < n or lower_primes_counter < n:
-            if upper_primes_counter < n:
-                upper_prime += 1
-
-                if isprime(upper_prime):
-                    upper_primes_counter += 1
-
-            if lower_primes_counter < n:
-                lower_prime -= 1
-
-                if isprime(lower_prime):
-                    lower_primes_counter += 1
-
-        print(upper_prime, upper_primes_counter)
-        print(lower_prime, lower_primes_counter)
+        result = meissel_lehmer_algorithm.find_thprime(initial_code, n)
 
         finish_time = perf_counter()
 
-        return str(lower_prime * upper_prime) + f" Time: {(finish_time-start_time):.6f}"
+        return str(result) + f" Time: {(finish_time-start_time):.6f}"
 
     @staticmethod
     def connect_client(client_address: str, client_connection: "socket") -> None:
