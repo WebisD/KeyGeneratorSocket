@@ -1,12 +1,14 @@
 from socket import socket, AF_INET, SOCK_STREAM
-from sympy import isprime
 from multiprocessing import Process
 from time import perf_counter
-import meissel_lehmer_algorithm
 
 class KeyServer:
     host: str
     port: int
+    file_indexHash = open("indexHash.txt")
+    file_primeHash = open("primeHash.txt")
+    indexHash_list = file_indexHash.readlines()
+    primeHash_list = file_primeHash.readlines()
 
     def __init__(self, host: str, port: int):
         self.host = host
@@ -14,15 +16,23 @@ class KeyServer:
 
     @staticmethod
     def generate_key(payload: str) -> str:
-        start_time = perf_counter()
+        #start_time = perf_counter()
 
         initial_code, n = (int(value) for value in payload.split())
 
-        result = meissel_lehmer_algorithm.find_thprime(initial_code, n)
+        indexHash = int(KeyServer.indexHash_list[initial_code])
+        lprimeHash = int(KeyServer.primeHash_list[indexHash-n+1])
+        rprimeHash = int(KeyServer.primeHash_list[indexHash+n]) if initial_code != int(KeyServer.primeHash_list[indexHash+1]) else int(KeyServer.primeHash_list[indexHash+n+1])
 
-        finish_time = perf_counter()
+        result = lprimeHash*rprimeHash
 
-        return str(result) + f" Time: {(finish_time-start_time):.6f}"
+        #finish_time = perf_counter()
+
+        #file = open("../../Statistics/times.txt", 'a')
+        #file.write(f'{finish_time-start_time}\n')
+        #file.close()
+
+        return str(result)
 
     @staticmethod
     def connect_client(client_address: str, client_connection: "socket") -> None:
