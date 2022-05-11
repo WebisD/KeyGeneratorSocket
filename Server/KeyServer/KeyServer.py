@@ -1,5 +1,6 @@
 from socket import socket, AF_INET, SOCK_STREAM
 from multiprocessing import Process
+from threading import Thread
 from time import perf_counter
 
 class KeyServer:
@@ -38,7 +39,7 @@ class KeyServer:
     def connect_client(client_address: str, client_connection: "socket") -> None:
         with client_connection:
             while True:
-                payload = client_connection.recv(1024).decode()
+                payload = client_connection.recv(64).decode()
 
                 if not payload:
                     break
@@ -50,12 +51,12 @@ class KeyServer:
 
         print(f"Client {client_address} has been disconnected\n")
 
-    def start_client_process(self, client_address: str, client_connection: "socket") -> None:
-        client_process = Process(
+    def start_client_thread(self, client_address: str, client_connection: "socket") -> None:
+        client_thread = Thread(
             target=KeyServer.connect_client,
             args=(client_address, client_connection)
         )
-        client_process.start()
+        client_thread.start()
 
     def run(self) -> None:
         with socket(AF_INET, SOCK_STREAM) as sock:
@@ -68,5 +69,5 @@ class KeyServer:
                 client_address = f"{client_ip}:{client_port}"
 
                 print(f"Client with address {client_address} has been connected")
-                self.start_client_process(client_address, client_connection)
+                self.start_client_thread(client_address, client_connection)
 

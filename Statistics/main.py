@@ -1,9 +1,9 @@
 from Statistics import Statistics
 
 def main():
-    st_LUT = Statistics("timesLUT.txt")
+    st_LUT = Statistics("timesTrueAllLUT2.txt", True)
     #print(st_LUT.limit_five())
-    st_LUT.plot_LUT_graph("Primes per Time using Look Up Table (LUT)", "primesXtimeLUT.png")
+    st_LUT.plot_std_graph("Mean and Std of Time X Generated Keys", "primesXtimeLUT50.png")
     x_lut, y_lut = st_LUT.return_xy()
 
     #st_NPprime = Statistics("timesNextprevprime.txt", std=True)
